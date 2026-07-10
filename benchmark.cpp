@@ -19,11 +19,11 @@ BenchResult bench_run(const BenchConfig& cfg)
 
 //预热
     for (int i = 0;i < cfg.warmup;++i)
-        logger.app(LogLevel::INFO, "warmup %d", i);
+        logger.add(LogLevel::INFO, "warmup %d", i);
     auto produce = [&](int id)
     {
         for (int i = 0;i < cfg.per_thread;++i)
-            logger.app(LogLevel::INFO, "t%d bench message #%d payload", id, i);
+            logger.add(LogLevel::INFO, "t%d bench message #%d payload", id, i);
     };
 
     auto t0 = clk::now();

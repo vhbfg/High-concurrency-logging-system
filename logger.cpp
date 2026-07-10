@@ -57,7 +57,7 @@ void Logger::vwrite(LogLevel level,LogCategory cat,const char* fmt,va_list ap){
     char ts[24];
     std::strftime(ts,sizeof(ts),"%Y-%m-%d %H:%M:%S",&tmv);
     int off=std::snprintf(rec.text,LOG_TEXT_CAPACITY,"%s [%s] ",ts,level_name(level));
-    if(off<0||off>=LOG_TEXT_CAPACITY){
+    if(off<0||off>=(int)LOG_TEXT_CAPACITY){
         off=LOG_TEXT_CAPACITY-1;
     }
     std::vsnprintf(rec.text+off,LOG_TEXT_CAPACITY-off,fmt,ap);

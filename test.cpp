@@ -11,7 +11,7 @@ int main()
     logger.init(cfg);
 
     logger.add(LogLevel::INFO, "hello");        // ② enum class 必须写 LogLevel:: 前缀
-    logger.add(LogLevel::ERROR, "id=%d", 100);  // ③ add 改成 app（头文件修正后的名字）
+    logger.add(LogLevel::ERROR, "id=%d", 100);  // ③ add 支持 printf 风格格式化参数
 
     logger.close();
     return 0;

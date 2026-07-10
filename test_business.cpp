@@ -17,7 +17,7 @@ void simulate_login(int id, int count)
     for (int i = 0; i < count; ++i)
     {
         log_app(LogLevel::INFO, "thread %d login user #%d", id, i);
-        log_operation(LogLevel::INFO, "thread %d login audit #%d", id, i);
+        global_logger().operation(LogLevel::INFO, "thread %d login audit #%d", id, i);
     }
 }
 void simulate_order(int id, int count)
@@ -25,7 +25,7 @@ void simulate_order(int id, int count)
     for (int i = 0; i < count; ++i)
     {
         log_app(LogLevel::INFO, "thread %d order created #%d", id, i);
-        log_operation(LogLevel::INFO, "thread %d order updated #%d", id, i);
+        global_logger().operation(LogLevel::INFO, "thread %d order updated #%d", id, i);
     }
 }
 void simulate_file_task(int id, int count)
@@ -33,7 +33,7 @@ void simulate_file_task(int id, int count)
     for (int i = 0; i < count; ++i)
     {
         log_app(LogLevel::INFO, "thread %d file upload start #%d", id, i);
-        log_operation(LogLevel::INFO, "thread %d file upload finish #%d", id, i);
+        global_logger().operation(LogLevel::INFO, "thread %d file upload finish #%d", id, i);
     }
 }
 void simulate_error(int id, int count)
@@ -41,7 +41,7 @@ void simulate_error(int id, int count)
     for (int i = 0; i < count; ++i)
     {
         log_app(LogLevel::WARN, "thread %d warning before error #%d", id, i);
-        log_operation(LogLevel::INFO, "thread %d error handling #%d", id, i);
+        global_logger().operation(LogLevel::INFO, "thread %d error handling #%d", id, i);
         log_error("thread %d simulated error #%d", id, i);
     }
 }
@@ -79,7 +79,7 @@ bool test_basic_log()
     fs::remove_all("test_logs_basic");
     log_init("test_logs_basic", LogLevel::DEBUG, QueueKind::Mutex);
     log_app(LogLevel::INFO, "hello basic %d", 1);
-    log_operation(LogLevel::INFO, "op basic %d", 2);
+    global_logger().operation(LogLevel::INFO, "op basic %d", 2);
     log_error("err basic %d", 3);
     log_close();
     return file_nonempty("test_logs_basic/application/application_001.log.enc") &&
@@ -91,8 +91,8 @@ bool test_level_filter()
     fs::remove_all("test_logs_filter");
     log_init("test_logs_filter", LogLevel::WARN, QueueKind::Mutex);
     uint64_t before = global_logger().metrics().enqueued();
-    log_app(LogLevel::INFO,  "should be filtered");
-    log_app(LogLevel::DEBUG, "should be filtered");
+    global_logger().add(LogLevel::INFO,  "should be filtered");
+    global_logger().add(LogLevel::DEBUG, "should be filtered");
     uint64_t mid = global_logger().metrics().enqueued();
     log_app(LogLevel::ERROR, "should pass");
     uint64_t after = global_logger().metrics().enqueued();
