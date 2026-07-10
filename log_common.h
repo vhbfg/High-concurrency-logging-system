@@ -1,5 +1,4 @@
 #pragma once
-// 公共类型与常量定义（本模块不实现业务函数）
 #include <cstddef>
 #include <cstdint>
 
@@ -18,18 +17,12 @@ enum class LogCategory : int {
     ERROR     = 2,   // 错误日志
 };
 
-// 单条日志文本容量
 inline constexpr std::size_t   LOG_TEXT_CAPACITY  = 512;
-// 队列容量（需为 2 的幂，供无锁队列取模用）
 inline constexpr std::size_t   LOG_QUEUE_CAPACITY = 8192;
-// 后台线程单次最多批量出队条数
 inline constexpr std::size_t   BATCH_SIZE         = 32;
-// 单个日志文件最大行数，超过后切分
 inline constexpr std::size_t   MAX_LINES_PER_FILE = 1000;
-// XOR 加密密钥
 inline constexpr unsigned char LOG_XOR_KEY        = 0x5A;
 
-// 队列中真正保存的一条日志
 struct LogRecord {
     LogLevel    level;
     LogCategory category;
