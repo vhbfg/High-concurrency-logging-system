@@ -18,8 +18,8 @@ enum class LogCategory : int {
 };
 
 inline constexpr std::size_t   LOG_TEXT_CAPACITY  = 512;
-inline constexpr std::size_t   LOG_QUEUE_CAPACITY = 65536;
-inline constexpr std::size_t   BATCH_SIZE         = 32;
+inline constexpr std::size_t   LOG_QUEUE_CAPACITY = 131072;
+inline constexpr std::size_t   BATCH_SIZE         = 64;
 inline constexpr std::size_t   MAX_LINES_PER_FILE = 1000;
 inline constexpr unsigned char LOG_XOR_KEY        = 0x5A;
 
