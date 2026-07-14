@@ -1,9 +1,10 @@
 #pragma once
-// 日志系统核心：业务线程入队，后台线程消费写盘
+
 #include "log_common.h"
 #include "log_queue.h"
 #include "log_writer.h"
 #include "metrics.h"
+
 #include <atomic>
 #include <condition_variable>
 #include <cstdarg>
@@ -13,14 +14,23 @@
 #include <string>
 #include <thread>
 
-enum class QueueKind { Mutex, LockFree };
+enum class QueueKind {
+    Mutex,
+    LockFree,
+    AdaptiveBlocking,
+};
 
 class Logger {
 public:
     struct Config {
         std::string dir       = "logs";
         LogLevel    min_level = LogLevel::DEBUG;
-        QueueKind   queue     = QueueKind::Mutex;
+        QueueKind   queue     = QueueKind::AdaptiveBlocking;
+
+        // For fixed queues this is the ring capacity. For AdaptiveBlocking it
+        // is the initial capacity. A zero value means "use the default".
+        std::size_t queue_capacity = 0;
+        std::size_t max_queue_capacity = 0;
     };
 
     Logger() = default;
@@ -35,15 +45,20 @@ public:
     void app(LogLevel level, const char* fmt, ...);
     void operation(LogLevel level, const char* fmt, ...);
     void error(const char* fmt, ...);
-
-    // 统一内部入口（各对外函数都委托到这里）
     void vwrite(LogLevel level, LogCategory cat, const char* fmt, va_list ap);
 
     uint64_t dropped_count() const { return metrics_.dropped(); }
+    uint64_t blocked_count() const { return metrics_.blocked_count(); }
+    uint64_t blocked_ns() const { return metrics_.blocked_ns(); }
+    uint64_t rejected_after_close_count() const {
+        return metrics_.rejected_after_close();
+    }
     Metrics& metrics() { return metrics_; }
 
+    static std::size_t dynamic_batch_size(std::size_t queue_size);
+
 private:
-    void thread_func();   // 后台写盘线程
+    void thread_func();
 
     std::unique_ptr<IQueue>    queue_;
     std::unique_ptr<LogWriter> writer_;
@@ -56,12 +71,13 @@ private:
     std::condition_variable    wake_cv_;
 };
 
-// 与预案一致的全局接口（内部委托给单例 Logger）
 bool     log_init(const char* dir, LogLevel min_level = LogLevel::DEBUG,
-                  QueueKind kind = QueueKind::Mutex);
+                  QueueKind kind = QueueKind::AdaptiveBlocking);
 void     log_app(LogLevel level, const char* fmt, ...);
 void     log_operation(LogLevel level, const char* fmt, ...);
 void     log_error(const char* fmt, ...);
 void     log_close();
 uint64_t log_get_dropped_count();
+uint64_t log_get_blocked_count();
+uint64_t log_get_blocked_ns();
 Logger&  global_logger();

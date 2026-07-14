@@ -1,6 +1,7 @@
 #pragma once
-// 后台写盘模块：按类别分文件、加密、切分
+
 #include "log_common.h"
+
 #include <fstream>
 #include <string>
 #include <utility>
@@ -9,8 +10,8 @@ class LogWriter {
 public:
     explicit LogWriter(std::string root = "logs") : root_(std::move(root)) {}
 
-    void init();                       // 创建三类日志目录
-    void write(const LogRecord& rec);  // 写入单条（分类 + 加密 + 切分）
+    void init();
+    void write(const LogRecord& rec);
     void flush_all();
     void close_all();
 

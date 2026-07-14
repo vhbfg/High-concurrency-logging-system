@@ -6,7 +6,7 @@ SRCS = log_crypto.cpp metrics.cpp log_writer.cpp logger.cpp \
        test_business.cpp benchmark.cpp main.cpp
 OBJS = $(SRCS:.cpp=.o)
 DEPS = $(wildcard *.h)
-TARGET = logsys
+TARGET = logsys.exe
 
 all: $(TARGET)
 
