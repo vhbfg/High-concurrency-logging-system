@@ -26,7 +26,7 @@ bench: $(TARGET)
 	./$(TARGET) bench
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) test.o $(TARGET)
 	rm -rf logs bench_logs test_logs_*
 
 .PHONY: all run test bench clean
