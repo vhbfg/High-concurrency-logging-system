@@ -9,15 +9,15 @@ DEPS = $(wildcard *.h)
 BIN_DIR = bin
 TARGET  = $(BIN_DIR)/logsys
 
-all: $(BIN_DIR) $(TARGET)
+all: $(TARGET)
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) | $(BIN_DIR)
 	$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
-$(BIN_DIR)/%.o: %.cpp $(DEPS)
+$(BIN_DIR)/%.o: %.cpp $(DEPS) | $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run: $(TARGET)
