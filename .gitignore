@@ -1,0 +1,12 @@
+# Build outputs
+bin/
+*.o
+*.exe
+
+# Generated logs
+logs/
+bench_logs*/
+test_logs_*/
+
+# IDE
+.vscode/

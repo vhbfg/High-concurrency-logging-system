@@ -4,16 +4,20 @@ LDFLAGS  ?= -pthread
 
 SRCS = log_crypto.cpp metrics.cpp log_writer.cpp logger.cpp \
        test_business.cpp benchmark.cpp main.cpp
-OBJS = $(SRCS:.cpp=.o)
+OBJS = $(addprefix $(BIN_DIR)/, $(SRCS:.cpp=.o))
 DEPS = $(wildcard *.h)
-TARGET = logsys.exe
+BIN_DIR = bin
+TARGET  = $(BIN_DIR)/logsys
 
-all: $(TARGET)
+all: $(BIN_DIR) $(TARGET)
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
-%.o: %.cpp $(DEPS)
+$(BIN_DIR)/%.o: %.cpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run: $(TARGET)
@@ -26,7 +30,7 @@ bench: $(TARGET)
 	./$(TARGET) bench
 
 clean:
-	rm -f $(OBJS) test.o $(TARGET)
-	rm -rf logs bench_logs test_logs_*
+	rm -rf $(BIN_DIR) *.o *.exe
+	rm -rf logs bench_logs* test_logs_*
 
 .PHONY: all run test bench clean
